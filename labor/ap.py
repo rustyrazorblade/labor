@@ -5,6 +5,8 @@ from model import Model, path, parse_kv
 from csv import reader
 import re
 
+import pandas
+
 # area
 """
 File Name:  ap.area
@@ -13,37 +15,21 @@ Field #/Data Element		Length		Value(Example)
 2. area_name			80		Text
 """
 
-area = parse_kv("ap/ap.area", 4)
-print area
+area = pandas.read_fwf(path.format("ap/ap.area"), widths=[4,100], names=["area_code", "area_name"], skiprows=2)
+print area.head(2)
+
 sys.exit()
-"""
-EMPTY
-File Name:  ap.footnote
-Field #/Data Element		Length		Value(Example)
-1. footnote_code		1		C
-2. footnote_text		100		Text
-"""
-footnote = dict()
+for x in area.iterrows():
+    print x
+    break
 
-"""
-File Name:  ap.item
-Field #/Data Element		Length		Value(Example)
-1. item_code			7		712211
-2. item_name			100		Text
-"""
+footnote = pandas.read_fwf(path.format("ap/ap.footnote"), skiprows=1, widths=[1,100])
+items = pandas.read_fwf(path.format("ap/ap.footnote"), skiprows=1, widths=[1,100])
 
-items = dict()
+items = parse_kv("ap/ap.item", 7)
+# periods = parse_kv("ap/ap.period")
 
-parser = re.compile("(.{7})(.*)")
-with open(path.format("/ap/ap.item")) as fp:
-    fp.next()
-    fp.next()
-    for x in fp:
-        x = x.strip()
-        matches = parser.match(x)
-        items[matches.group(1)] = matches.group(2).strip()
 
-print items
 """
 
 File Name:  ap.period

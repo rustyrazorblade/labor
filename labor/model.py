@@ -10,17 +10,18 @@ class Model(BaseModel):
 
 path = "/Users/jhaddad/datasets/labor/data/time.series/{}"
 
-def parse_kv(suffix, first_field_len):
+def parse_kv(suffix, first_field_len, skip_lines=2):
     """
     suffix is something like "ap/ap.area"
     """
-    regex = "(.{})(.*)".format(first_field_len)
+    regex = "(.{{{}}})(.*)".format(first_field_len)
     parser = re.compile(regex)
     result = dict()
 
     with open(path.format(suffix)) as fp:
-        fp.next()
-        fp.next()
+        for x in range(skip_lines):
+            fp.next()
+
         for x in fp:
             x = x.strip()
             matches = parser.match(x)
