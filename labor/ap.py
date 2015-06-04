@@ -1,11 +1,12 @@
 import os
 import sys
 
-from model import Model, path, parse_kv
+from model import Model, path, get_cluster
 from csv import reader
 import re
 
 import pandas
+import ironeagle
 
 # area
 """
@@ -15,18 +16,18 @@ Field #/Data Element		Length		Value(Example)
 2. area_name			80		Text
 """
 
-area = pandas.read_fwf(path.format("ap/ap.area"), widths=[4,100], names=["area_code", "area_name"], skiprows=2)
-print area.head(2)
+session = get_session()
+session.execute("CREATE TABLE IF NOT EXISTS average_price_data (area_code text primary key, area_name text)")
 
-sys.exit()
+area = pandas.read_fwf(path.format("ap/ap.area"), widths=[4,100], names=["area_code", "area_name"], skiprows=2)
+
 for x in area.iterrows():
     print x
-    break
 
-footnote = pandas.read_fwf(path.format("ap/ap.footnote"), skiprows=1, widths=[1,100])
-items = pandas.read_fwf(path.format("ap/ap.footnote"), skiprows=1, widths=[1,100])
+# footnote = pandas.read_fwf(path.format("ap/ap.footnote"), skiprows=1, widths=[1,100])
+# items = pandas.read_fwf(path.format("ap/ap.footnote"), skiprows=1, widths=[1,100])
 
-items = parse_kv("ap/ap.item", 7)
+# items = parse_kv("ap/ap.item", 7)
 # periods = parse_kv("ap/ap.period")
 
 
