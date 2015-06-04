@@ -1,7 +1,7 @@
 import os
 import sys
 
-from model import Model, path, get_cluster
+from model import Model, path, get_cluster, get_session
 from csv import reader
 import re
 
@@ -21,8 +21,8 @@ session.execute("CREATE TABLE IF NOT EXISTS average_price_data (area_code text p
 
 area = pandas.read_fwf(path.format("ap/ap.area"), widths=[4,100], names=["area_code", "area_name"], skiprows=2)
 
-for x in area.iterrows():
-    print x
+for i, row in area.iterrows():
+    print row
 
 # footnote = pandas.read_fwf(path.format("ap/ap.footnote"), skiprows=1, widths=[1,100])
 # items = pandas.read_fwf(path.format("ap/ap.footnote"), skiprows=1, widths=[1,100])
