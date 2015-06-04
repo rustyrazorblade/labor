@@ -1,54 +1,50 @@
 import os
-print os.getcwd()
+import sys
 
-from model import Model, path
+from model import Model, path, parse_kv
 from csv import reader
-
+import re
 
 # area
 """
 File Name:  ap.area
-
 Field #/Data Element		Length		Value(Example)
-
 1. area_code			4		A100
-
 2. area_name			80		Text
 """
 
-area = dict()
+area = parse_kv("ap/ap.area", 4)
+print area
+sys.exit()
+"""
+EMPTY
+File Name:  ap.footnote
+Field #/Data Element		Length		Value(Example)
+1. footnote_code		1		C
+2. footnote_text		100		Text
+"""
+footnote = dict()
 
-import re
+"""
+File Name:  ap.item
+Field #/Data Element		Length		Value(Example)
+1. item_code			7		712211
+2. item_name			100		Text
+"""
 
-parser = re.compile("(.{4})(.*)")
-with open(path.format("/ap/ap.area")) as fp:
+items = dict()
+
+parser = re.compile("(.{7})(.*)")
+with open(path.format("/ap/ap.item")) as fp:
     fp.next()
     fp.next()
     for x in fp:
         x = x.strip()
         matches = parser.match(x)
-        area[matches.group(1)] = matches.group(2).strip()
+        items[matches.group(1)] = matches.group(2).strip()
 
-print area
-
+print items
 """
-File Name:  ap.footnote
-
-Field #/Data Element		Length		Value(Example)
-
-1. footnote_code		1		C
-
-2. footnote_text		100		Text
-
-
-File Name:  ap.item
-
-Field #/Data Element		Length		Value(Example)
-
-1. item_code			7		712211
-
-2. item_name			100		Text
-
 
 File Name:  ap.period
 
