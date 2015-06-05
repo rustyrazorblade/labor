@@ -35,8 +35,6 @@ class AveragePriceData(Model):
 
 sync_table(AveragePriceData)
 
-# session.execute("CREATE TABLE IF NOT EXISTS average_price_data (area_code text primary key, area_name text)")
-
 # read the master data (ap.series)
 series = pandas.read_csv(path.format("ap/ap.series"), sep='\t', skiprows=1,
                          names=["series_id", "area_code", "item_code", "footnote_codes", "begin_year",
