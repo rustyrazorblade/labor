@@ -50,7 +50,6 @@ series.set_index("series_id", inplace=True)
 area = pandas.read_fwf(path.format("ap/ap.area"), widths=[4,100], names=["area_code", "area_name"], skiprows=2)
 area.set_index("area_code", inplace=True)
 
-
 footnotes = pandas.read_fwf(path.format("ap/ap.footnote"), skiprows=1, widths=[1,100], names=["footnote_code", "footnote_text"])
 footnotes.set_index("footnote_code", inplace=True)
 
@@ -70,19 +69,3 @@ for k, v in result.iterrows():
         print vals
         break
     print "Created {}".format(k)
-
-
-"""
-
-File Name:  ap.period
-
-Field #/Data Element		Length		Value(Example)
-
-1. period			3		M01
-
-2. period_abbr			5		JAN
-
-3. period_name			20		Tex
-"""
-
-# items
