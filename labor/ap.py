@@ -2,7 +2,6 @@ import os
 import sys
 
 from model import Model, path, get_cluster, get_session
-from csv import reader
 import re
 
 import pandas
