@@ -16,7 +16,10 @@ File Name:  ap.area
 Field #/Data Element		Length		Value(Example)
 1. area_code			4		A100
 2. area_name			80		Text
+
+
 """
+
 def run():
     session = get_session()
     class AveragePriceData(Model):
