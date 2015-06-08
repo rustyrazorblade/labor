@@ -38,8 +38,8 @@ area_name          object
 
 class AveragePriceDataCurrent(Model):
     series_id = Text(primary_key=True)
-    year  = Integer()
-    period  = Text()
+    year  = Integer(primary_key=True)
+    period  = Text(primary_key=True)
     value  = Float()
     footnote_codes  = Text()
     area_code   = Text()
@@ -68,7 +68,7 @@ def main():
 
     # get the items
     series["area_code"] = series["series_id"].map(lambda x: x[3:7])
-    series["item"] = series["series_id"].map(lambda x: x[7:13])
+    series["item"] = series["series_id"].map(lambda x: x[7:13].strip())
     # print series.head(2)
 
     items = pandas.read_csv(path.format("ap/ap.item"), sep="\t")
@@ -78,18 +78,22 @@ def main():
     areas = pandas.read_csv(path.format("ap/ap.area"), sep="\t")
 
     items.set_index("item_code", inplace=True)
-    series.set_index("series_id", inplace=True)
+    # series.set_index("series_id", inplace=True)
     areas.set_index("area_code", inplace=True)
 
     result = series.join(periods, on="period").join(items, on="item").\
                     join(areas, on="area_code")
+
+    result["series_id"] = result["series_id"].map(lambda x: x.strip())
+    result["area_name"]  = result["area_name"].fillna("")
+    result["value"]  = result["value"].fillna(0)
 
     i = 0
     errors = 0
     for k, v in result.iterrows():
         i += 1
         vals = v.to_dict()
-        vals["series_id"] = k
+
         try:
             AveragePriceDataCurrent.create(**vals)
         except Exception as e:
@@ -97,7 +101,6 @@ def main():
             print e
             print "key: {}".format(k)
             print vals
-        print "Created {}".format(k)
 
     print "Total: {}".format(i)
     print "Errors: {}".format(errors)
