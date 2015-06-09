@@ -75,37 +75,44 @@ def main():
     # series.set_index("series_id", inplace=True)
     areas.set_index("area_code", inplace=True)
 
-    series = pandas.read_csv(path.format("ap/ap.data.0.Current"),
-                             skiprows=1, sep="\t",
-                             names=["series_id", "year", "period",
-                                    "value", "footnote_codes"])
-                                    
-    series["area_code"] = series["series_id"].map(lambda x: x[3:7])
-    series["item"] = series["series_id"].map(lambda x: x[7:13].strip())
+    files = ["ap.data.0.Current", "ap.data.1.HouseholdFuels",
+             "ap.data.2.Gasoline", "ap.data.3.Food"]
 
-    result = series.join(periods, on="period").join(items, on="item").\
-                    join(areas, on="area_code")
+    for f in files:
+        file = path.format("ap/") + f
 
-    result["series_id"] = result["series_id"].map(lambda x: x.strip())
-    result["area_name"]  = result["area_name"].fillna("")
-    result["value"]  = result["value"].fillna(0)
+        series = pandas.read_csv(file,
+                                 skiprows=1, sep="\t",
+                                 names=["series_id", "year", "period",
+                                        "value", "footnote_codes"])
 
-    i = 0
-    errors = 0
-    for k, v in result.iterrows():
-        i += 1
-        vals = v.to_dict()
+        series["area_code"] = series["series_id"].map(lambda x: x[3:7])
+        series["item"] = series["series_id"].map(lambda x: x[7:13].strip())
 
-        try:
-            AveragePriceDataCurrent.create(**vals)
-        except Exception as e:
-            errors += 1
-            print e
-            print "key: {}".format(k)
-            print vals
+        result = series.join(periods, on="period").join(items, on="item").\
+                        join(areas, on="area_code")
 
-    print "Total: {}".format(i)
-    print "Errors: {}".format(errors)
+        result["series_id"] = result["series_id"].map(lambda x: x.strip())
+        result["area_name"]  = result["area_name"].fillna("")
+        result["value"]  = result["value"].fillna(0)
+
+        i = 0
+        errors = 0
+        print "Saving {}".format(file)
+        for k, v in result.iterrows():
+            i += 1
+            vals = v.to_dict()
+
+            try:
+                AveragePriceDataCurrent.create(**vals)
+            except Exception as e:
+                errors += 1
+                print e
+                print "key: {}".format(k)
+                print vals
+
+        print "Total: {}".format(i)
+        print "Errors: {}".format(errors)
 
 if __name__ == "__main__":
     main()
