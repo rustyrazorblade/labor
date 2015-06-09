@@ -54,10 +54,6 @@ def main():
     # session = get_session()
     sync_table(AveragePriceDataCurrent)
 
-    series = pandas.read_csv(path.format("ap/ap.data.0.Current"),
-                             skiprows=1, sep="\t",
-                             names=["series_id", "year", "period",
-                                    "value", "footnote_codes"])
 
     # print series.head(5)
     # pull in the period
@@ -67,8 +63,6 @@ def main():
     # print periods.head(5)
 
     # get the items
-    series["area_code"] = series["series_id"].map(lambda x: x[3:7])
-    series["item"] = series["series_id"].map(lambda x: x[7:13].strip())
     # print series.head(2)
 
     items = pandas.read_csv(path.format("ap/ap.item"), sep="\t")
@@ -80,6 +74,14 @@ def main():
     items.set_index("item_code", inplace=True)
     # series.set_index("series_id", inplace=True)
     areas.set_index("area_code", inplace=True)
+
+    series = pandas.read_csv(path.format("ap/ap.data.0.Current"),
+                             skiprows=1, sep="\t",
+                             names=["series_id", "year", "period",
+                                    "value", "footnote_codes"])
+                                    
+    series["area_code"] = series["series_id"].map(lambda x: x[3:7])
+    series["item"] = series["series_id"].map(lambda x: x[7:13].strip())
 
     result = series.join(periods, on="period").join(items, on="item").\
                     join(areas, on="area_code")
