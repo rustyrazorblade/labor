@@ -57,7 +57,9 @@ def main():
 
     # print series.head(5)
     # pull in the period
-    periods = pandas.read_csv(path.format("ap/ap.period"), sep="\t")
+    file = path.format("ap/ap.period")
+    print "Reading {}".format(file)
+    periods = pandas.read_csv(file, sep="\t")
     periods.set_index("period", inplace=True)
 
     # print periods.head(5)
